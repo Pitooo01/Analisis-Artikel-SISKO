@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analisis Artikel SISKO</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Program Analisis Artikel SISKO</h1>
+      <p>Fitur: Pencarian Kata, Penggantian Kata, Pengurutan Kata Abjad</p>
+
+      <div class="two-column-layout">
+        <div class="left-column">
+          <div class="artikel">
+            <h2>Artikel</h2>
+            {% for paragraf in artikel %}
+            <p>{{ paragraf }}</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="right-column">
+          {% if not selected_fitur %}
+          <div class="menu">
+            <h2>Pilih Fitur</h2>
+            <div class="menu-buttons">
+              <button onclick="selectFitur('cari')">Pencarian Kata</button>
+              <button onclick="selectFitur('ganti')">Penggantian Kata</button>
+              <button onclick="selectFitur('urut')">Pengurutan Kata Abjad</button>
+            </div>
+          </div>
+          {% else %}
+          <div class="fitur">
+            {% if selected_fitur == 'cari' %}
+            <div class="card">
+              <h3>Pencarian Kata</h3>
+              <form method="post">
+                <input
+                  type="text"
+                  name="kata_cari"
+                  placeholder="Masukkan kata yang ingin dicari"
+                  required
+                />
+                <button type="submit" name="cari">Cari</button>
+              </form>
+
+              {% if hasil_cari is not none %} {% if hasil_cari == 0 %}
+              <p style="color: red">Tidak ada kata.</p>
+              {% else %}
+              <p>Kata ditemukan sebanyak {{ hasil_cari }} kali.</p>
+              {% endif %} {% endif %}
+            </div>
+            {% elif selected_fitur == 'ganti' %}
+            <div class="card">
+              <h3>Penggantian Kata</h3>
+              <form method="post">
+                <input
+                  type="text"
+                  name="kata_lama"
+                  placeholder="Kata yang ingin diganti"
+                  required
+                />
+                <input
+                  type="text"
+                  name="kata_baru"
+                  placeholder="Kata pengganti"
+                  required
+                />
+                <button type="submit" name="ganti">Ganti</button>
+              </form>
+              {% if hasil_ganti %}
+              <h4>Artikel setelah diganti:</h4>
+              {% for paragraf in hasil_ganti %}
+              <p>{{ paragraf }}</p>
+              {% endfor %}
+              {% endif %}
+            </div>
+            {% elif selected_fitur == 'urut' %}
+            <div class="card">
+              <h3>Pengurutan Kata Abjad</h3>
+              <form method="post">
+                <button type="submit" name="urut">Urutkan</button>
+              </form>
+              {% if hasil_urut %}
+              <h4>Daftar kata terurut abjad:</h4>
+              <div class="scroll-box">
+                <ul>
+                  {% for kata in hasil_urut %}
+                    <li>{{ kata }}</li>
+                  {% endfor %}
+                </ul>
+              <p>Total kata unik: {{ hasil_urut|length }}</p>
+              {% endif %}
+            </div>
+            {% endif %}
+            <button id="kembali" onclick="backToMenu()">Kembali ke Menu</button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function selectFitur(fitur) {
+        window.location.href = '/?fitur=' + fitur;
+      }
+
+      function backToMenu() {
+        window.location.href = '/';
+      }
+    </script>
+  </body>
+</html>
